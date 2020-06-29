@@ -7,13 +7,21 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
+
+    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var items = [Item]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Get data folder
+        print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
+
         setupList()
     }
 
@@ -23,13 +31,28 @@ class ViewController: UIViewController {
         tableView.dataSource = self
     }
 
+    private func saveData() {
+        do {
+            try context.save()
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+    }
+
     @IBAction func btnAddTapped(_ sender: Any) {
         var textField = UITextField()
 
         let alertVC = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
         let actionAdd = UIAlertAction(title: "Add", style: .default) { (_) in
-            print(textField.text!)
+            let newItem = Item(context: self.context)
+            newItem.title = textField.text!
+            newItem.status = false
+
+            self.items.append(newItem)
+            self.tableView.reloadData()
+            self.saveData()
         }
 
         alertVC.addTextField { (alertTextField) in
@@ -47,12 +70,14 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return items.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
-        cell.textLabel?.text = "Item \(indexPath.row)"
+        let item = items[indexPath.row]
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.status ? .checkmark : .none
         return cell
     }
 }

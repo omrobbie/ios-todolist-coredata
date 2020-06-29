@@ -5,6 +5,6 @@
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Item" positionX="-36" positionY="9" width="128" height="73"/>
+        <element name="Item" positionX="-27" positionY="18" width="128" height="73"/>
     </elements>
 </model>
