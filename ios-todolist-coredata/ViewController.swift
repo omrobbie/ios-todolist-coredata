@@ -23,6 +23,7 @@ class ViewController: UIViewController {
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
 
         setupList()
+        loadData()
     }
 
     private func setupList() {
@@ -34,6 +35,17 @@ class ViewController: UIViewController {
     private func saveData() {
         do {
             try context.save()
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+    }
+
+    private func loadData() {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+
+        do {
+            items = try context.fetch(request)
         } catch {
             print(error.localizedDescription)
             return
