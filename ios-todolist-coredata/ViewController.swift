@@ -92,4 +92,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         cell.accessoryType = item.status ? .checkmark : .none
         return cell
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        items[indexPath.row].status = !items[indexPath.row].status
+        tableView.reloadData()
+        saveData()
+    }
 }
